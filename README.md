@@ -1,41 +1,41 @@
 # JSON Formatter
 
-A clean, fast, and feature-rich JSON formatter web application with persistent storage.
+A single-page web application for formatting and managing JSON data.
 
 ## Features
 
-- **Real-time Formatting** - Automatically formats JSON as you type or paste
-- **Error Handling** - Clear error messages for invalid JSON
-- **Pin Outputs** - Save multiple formatted JSON outputs with custom names
-- **Persistent Storage** - Pinned outputs are saved to localStorage and persist across sessions
-- **Download JSON** - Export formatted JSON as downloadable files
-- **Maximize View** - Expand textareas to fit content perfectly
-- **Icon-based UI** - Clean, intuitive interface with SVG icons
-- **Fully Offline** - No external dependencies, works completely offline
+- Real-time JSON formatting and validation
+- Search and filter JSON content by keys or values
+- Pin formatted outputs with custom names
+- Download JSON files
+- Persistent storage using localStorage
+- Copy to clipboard functionality
+- Self-contained HTML file with no external dependencies
 
-## Usage
+## Setup
 
-1. **Open the app** - Simply open `app/index.html` in your browser
-2. **Paste JSON** - Paste or type JSON in the left textarea
-3. **View formatted output** - Formatted JSON appears instantly on the right
-4. **Pin outputs** - Click the pin button to save outputs with optional custom names
-5. **Download** - Export any output as a `.json` file
+Open `app/index.html` in a web browser. For local development:
 
-## Development
-
-Run a local server:
 ```bash
 python3 -m http.server 8000
 ```
 
-Then navigate to http://localhost:8000/app/
+Navigate to http://localhost:8000/app/
+
+## Usage
+
+1. Paste or type JSON in the input textarea
+2. Formatted output appears in the right panel
+3. Use the search box to filter JSON content
+4. Pin outputs to save them with optional custom names
+5. Download any output as a .json file
+6. Copy formatted JSON to clipboard
 
 ## Technical Details
 
-- **Zero Dependencies** - Single HTML file with inline CSS and JavaScript
-- **LocalStorage** - Persistent storage for pinned outputs
-- **Responsive Design** - Works on desktop and mobile devices
-- **Modern Browser Support** - Uses native clipboard API and modern JavaScript
+- Single HTML file with inline CSS and JavaScript
+- Uses localStorage for persistent data storage
+- Supports modern browsers with ES6, localStorage, and Clipboard APIs
 
 ## File Structure
 
