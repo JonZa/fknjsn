@@ -1,10 +1,10 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code when working with this repository.
 
 ## Project Overview
 
-This is a single-page JSON formatter web application built as a self-contained HTML file. The app provides real-time JSON formatting, validation, and management capabilities with persistent storage.
+A JSON comparison tool built with Vue 3. Paste JSON into rows, compare side-by-side in columns, search within each block. Dark mode IDE-like interface.
 
 ## Development Commands
 
@@ -12,56 +12,48 @@ This is a single-page JSON formatter web application built as a self-contained H
 ```bash
 python3 -m http.server 8000
 ```
-Access the application at http://localhost:8000/app/
+Access at http://localhost:8000/app/
 
 ## Architecture
 
-**Single File Architecture:**
-- `app/index.html` - Self-contained application with inline CSS and JavaScript
-- No external dependencies or build process required
-- All assets (favicons, icons) are relative to the app directory
+**Single File + CDN Dependencies:**
+- `app/index.html` - Vue 3 SFC-style app with inline CSS/JS
+- Vue 3.4.21 and vue-json-pretty 2.4.0 loaded from unpkg CDN
+- No build step required
 
 **Core Components:**
-
-1. **JSON Processing Engine** - Real-time parsing and formatting with error handling
-2. **Pin Management System** - Persistent storage of formatted outputs with custom naming
-3. **Icon-Based UI** - SVG icons for all actions (copy, pin, download, maximize, remove)
-4. **LocalStorage Persistence** - Automatic saving/loading of pinned outputs across sessions
+1. **Row/Column System** - Rows contain up to 4 JSON blocks for comparison
+2. **JSON Rendering** - vue-json-pretty with full expansion and syntax highlighting
+3. **Search/Filter** - Per-block search with memoized filtering (filteredData)
+4. **Dark Theme** - VS Code Dark+ inspired CSS custom properties
+5. **Persistence** - localStorage saves rows, selection, counters
 
 **Data Flow:**
-- Input textarea → JSON.parse() → JSON.stringify(obj, null, 2) → Output textarea
-- Pin action → localStorage → Dynamic DOM creation
-- All pinned outputs auto-resize to content height
+- Paste JSON → parse → add to selected row's blocks
+- Block search → filterJSON() → filteredData (debounced 150ms)
+- All state → localStorage (debounced 500ms, excludes filteredData)
 
 **Key Functions:**
-- `formatJSON()` - Core JSON processing with error states
-- `createPinnedSection()` - Dynamic creation of pinned output blocks
-- `copyToClipboard()` - Handles icon restoration after "Copied!" feedback
-- `downloadJSON()` - Creates downloadable .json files with custom naming
-
-**Icon Integration:**
-- All buttons use SVG icons from `app/icons/` directory
-- Icons are styled with CSS filter for white coloring
-- Copy button properly restores icon after temporary "Copied!" text
+- `selectRow(id)` - Set active row for paste target
+- `addColumn(rowId)` - Add empty column to row
+- `addRow()` - Add new row, auto-scroll
+- `removeRow(rowId)` / `removeColumn(rowId, blockId)` - Remove with cleanup
+- `filterJSON(data, search)` - Recursive JSON filtering
 
 **LocalStorage Schema:**
 ```javascript
-pinnedData = [
-  {
-    id: number,        // Sequential counter
-    content: string,   // Formatted JSON
-    name: string|null  // Optional custom name
-  }
-]
+{
+  rows: [{ id, blocks: [{ id, data, search }] }],
+  selectedRowId: number,
+  blockIdCounter: number,
+  rowIdCounter: number
+}
 ```
 
-**Button Behavior:**
-- Main output: Copy, Pin (with name prompt), Download, Maximize (toggleable)
-- Pinned outputs: Copy, Download (with custom filename), Remove (auto-maximized)
+## UI Behavior
 
-## Development Notes
-
-- Project configured to use claude-3-5-sonnet-20241022 model
-- Button icon restoration requires `innerHTML` manipulation (not `textContent`)
-- Pinned outputs always auto-size to content; only main output has manual maximize
-- Custom names for pinned outputs generate sanitized filenames for downloads
+- Minimum 4 rows always visible
+- Auto-add row when all rows have data
+- Max 4 columns per row
+- Click row to select (blue highlight)
+- Paste goes to selected row's first empty column or creates new column

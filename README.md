@@ -1,67 +1,44 @@
-# JSON Formatter
+# fknjsn
 
-A single-page web application for formatting and managing JSON data.
+A JSON comparison tool. Paste JSON, compare side-by-side, search within blocks.
 
 ## Features
 
-- Real-time JSON formatting and validation
-- Search and filter JSON content by keys or values
-- Pin formatted outputs with custom names
-- Download JSON files
-- Persistent storage using localStorage
-- Copy to clipboard functionality
-- Self-contained HTML file with no external dependencies
+- **Row/Column Layout** - Compare up to 4 JSON blocks per row
+- **Live Search** - Filter JSON by keys or values within each block
+- **Dark Mode** - VS Code-inspired theme
+- **Persistent Storage** - Rows and data saved to localStorage
+- **No Build Step** - Single HTML file, CDN dependencies
+
+## Usage
+
+1. Click a row to select it
+2. Paste JSON (auto-fills first empty column or creates new)
+3. Use search box to filter within each block
+4. Click "+" to add more columns (max 4)
+5. Click "×" to remove rows or columns
 
 ## Setup
-
-Open `app/index.html` in a web browser. For local development:
 
 ```bash
 python3 -m http.server 8000
 ```
+Open http://localhost:8000/app/
 
-Navigate to http://localhost:8000/app/
+## Tech Stack
 
-## Usage
-
-1. Paste or type JSON in the input textarea
-2. Formatted output appears in the right panel
-3. Use the search box to filter JSON content
-4. Pin outputs to save them with optional custom names
-5. Download any output as a .json file
-6. Copy formatted JSON to clipboard
-
-## Technical Details
-
-- Single HTML file with inline CSS and JavaScript
-- Uses localStorage for persistent data storage
-- Supports modern browsers with ES6, localStorage, and Clipboard APIs
+- Vue 3.4.21 (CDN)
+- vue-json-pretty 2.4.0 (CDN)
+- CSS Custom Properties for theming
+- localStorage for persistence
 
 ## File Structure
 
 ```
 app/
-├── index.html          # Main application (self-contained)
-├── favicon.ico         # Browser favicon
-├── favicon-16x16.png   # 16px favicon
-├── favicon-32x32.png   # 32px favicon
-├── apple-touch-icon.png # iOS home screen icon
-└── icons/              # SVG icons
-    ├── copy.svg        # Copy to clipboard
-    ├── download.svg    # Download JSON
-    ├── maximize.svg    # Maximize textarea
-    ├── paperclip.svg   # Pin output
-    └── trash.svg       # Remove pinned item
+├── index.html      # Complete application
+├── favicon.ico
+├── favicon-16x16.png
+├── favicon-32x32.png
+└── apple-touch-icon.png
 ```
-
-## Browser Compatibility
-
-Works in all modern browsers that support:
-- ES6 JavaScript
-- LocalStorage API
-- Clipboard API
-- CSS Grid
-
-## License
-
-This project is open source and available for personal and commercial use.
