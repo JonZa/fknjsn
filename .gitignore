@@ -25,3 +25,6 @@ build/
 
 # Claude plans (session-specific)
 .claude/plans/
+
+# Playwright MCP output
+.playwright-mcp/
