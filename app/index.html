@@ -315,6 +315,122 @@
         }
       }
 
+      /* Column counter badge */
+      .column-counter {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        font-size: 11px;
+        color: var(--text-muted);
+        background: var(--bg-base);
+        padding: 2px 6px;
+        border-radius: 3px;
+        border: 1px solid var(--border);
+      }
+
+      /* Search input wrapper for clear button */
+      .search-input-wrapper {
+        position: relative;
+        flex: 1;
+      }
+
+      .search-input-wrapper .search-input {
+        width: 100%;
+        padding-right: 28px;
+      }
+
+      .search-clear-btn {
+        position: absolute;
+        right: 6px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-size: 16px;
+        padding: 4px;
+        line-height: 1;
+      }
+      .search-clear-btn:hover {
+        color: var(--text-primary);
+      }
+
+      /* New row highlight animation */
+      .row.just-added {
+        animation: row-highlight 1s ease-out;
+      }
+
+      @keyframes row-highlight {
+        0% {
+          background: var(--border-focus);
+          box-shadow: inset 0 0 0 2px var(--border-focus);
+        }
+        100% {
+          background: inherit;
+          box-shadow: none;
+        }
+      }
+
+      /* Toast notifications */
+      .toast-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        z-index: 200;
+      }
+
+      .toast {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        animation: toast-in 0.2s ease-out;
+        max-width: 360px;
+      }
+
+      .toast.error { border-left: 3px solid #f14c4c; }
+      .toast.warning { border-left: 3px solid #cca700; }
+      .toast.success { border-left: 3px solid #4ec9b0; }
+      .toast.info { border-left: 3px solid #007acc; }
+
+      .toast-message {
+        flex: 1;
+        color: var(--text-primary);
+      }
+      .toast-details {
+        font-size: 12px;
+        color: var(--text-secondary);
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .toast-dismiss {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-size: 18px;
+        padding: 0 4px;
+      }
+      .toast-dismiss:hover {
+        color: var(--text-primary);
+      }
+
+      @keyframes toast-in {
+        from { opacity: 0; transform: translateX(20px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+
       /* vue-json-pretty dark theme overrides */
       .vjs-tree {
         background: transparent !important;
@@ -349,11 +465,14 @@
             v-for="(row, index) in rows"
             :key="row.id"
             class="row"
-            :class="{ selected: selectedRowId === row.id }"
+            :class="{ selected: selectedRowId === row.id, 'just-added': row.justAdded }"
             tabindex="0"
             @click="selectRow(row.id)"
             @keydown.enter="selectRow(row.id)"
           >
+            <span v-if="row.blocks.some(b => b.data !== null)" class="column-counter">
+              {{ row.blocks.filter(b => b.data !== null).length }}/4
+            </span>
             <button
               v-if="rows.length > 4 || row.blocks.some(b => b.data !== null)"
               class="close-btn row-close-btn"
@@ -398,11 +517,19 @@
               </div>
               <div v-else class="json-block">
                 <div class="search-row">
-                  <input
-                    v-model="block.search"
-                    placeholder="Search JSON..."
-                    class="search-input"
-                  />
+                  <div class="search-input-wrapper">
+                    <input
+                      v-model="block.search"
+                      placeholder="Search JSON..."
+                      class="search-input"
+                    />
+                    <button
+                      v-if="block.search"
+                      class="search-clear-btn"
+                      @click.stop="block.search = ''"
+                      title="Clear search"
+                    >&times;</button>
+                  </div>
                   <button
                     class="close-btn"
                     @click.stop="removeColumn(row.id, block.id)"
@@ -451,6 +578,14 @@
             </button>
           </div>
         </div>
+        <!-- Toast notifications -->
+        <div class="toast-container">
+          <div v-for="toast in toasts" :key="toast.id" class="toast" :class="toast.type">
+            <span class="toast-message">{{ toast.message }}</span>
+            <span v-if="toast.details" class="toast-details">{{ toast.details }}</span>
+            <button class="toast-dismiss" @click="dismissToast(toast.id)">&times;</button>
+          </div>
+        </div>
       </div>
     </main>
 
@@ -469,8 +604,22 @@
             { id: 4, blocks: [] },
           ]);
           const selectedRowId = ref(1);
+          const toasts = ref([]);
           let blockIdCounter = 0;
           let rowIdCounter = 4;
+          let toastId = 0;
+
+          function showToast(message, type = 'info', details = null, duration = 4000) {
+            const id = ++toastId;
+            toasts.value.push({ id, message, type, details });
+            setTimeout(() => {
+              toasts.value = toasts.value.filter(t => t.id !== id);
+            }, duration);
+          }
+
+          function dismissToast(id) {
+            toasts.value = toasts.value.filter(t => t.id !== id);
+          }
 
           function selectRow(id) {
             selectedRowId.value = id;
@@ -594,9 +743,12 @@
             const newRow = {
               id: ++rowIdCounter,
               blocks: [],
+              justAdded: true,
             };
             rows.value.push(newRow);
             selectedRowId.value = newRow.id;
+            // Clear the flag after animation completes
+            setTimeout(() => { newRow.justAdded = false; }, 1000);
           }
 
           function removeRow(rowId) {
@@ -607,9 +759,11 @@
               while (rows.value.length < 4) {
                 rows.value.push({ id: ++rowIdCounter, blocks: [] });
               }
-              // Update selection if needed
+              // Select adjacent row: prefer previous, fallback to same index position
               if (selectedRowId.value === rowId) {
-                selectedRowId.value = rows.value[0]?.id ?? null;
+                const newIndex = Math.min(index, rows.value.length - 1);
+                const adjacentIndex = index > 0 ? index - 1 : newIndex;
+                selectedRowId.value = rows.value[adjacentIndex]?.id ?? rows.value[0]?.id;
               }
             }
           }
@@ -651,6 +805,7 @@
               }
             } catch (err) {
               console.error("Invalid JSON pasted:", err);
+              showToast("Invalid JSON", "error", err.message);
             }
           };
 
@@ -738,7 +893,7 @@
               localStorage.setItem(
                 "json-rows",
                 JSON.stringify({
-                  rows: rows.value.map((row) => ({
+                  rows: rows.value.map(({ justAdded, ...row }) => ({
                     ...row,
                     blocks: row.blocks.map(({ filteredData, ...block }) => block),
                   })),
@@ -749,6 +904,7 @@
               );
             } catch (e) {
               console.error("Failed to save data:", e);
+              showToast("Storage full - data may not persist", "warning");
             }
           }, 500);
 
@@ -775,10 +931,12 @@
           return {
             rows,
             selectedRowId,
+            toasts,
             selectRow,
             addColumn,
             removeRow,
             removeColumn,
+            dismissToast,
           };
         },
       }).mount("#app");
