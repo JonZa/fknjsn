@@ -33,12 +33,12 @@
     <!-- Performance -->
     <link rel="preconnect" href="https://unpkg.com" crossorigin>
 
-    <script src="https://unpkg.com/vue@3.4.21/dist/vue.global.js"></script>
-    <script src="https://unpkg.com/vue-json-pretty@2.4.0/lib/vue-json-pretty.js"></script>
     <link
       rel="stylesheet"
       href="https://unpkg.com/vue-json-pretty@2.4.0/lib/styles.css"
     />
+    <script src="https://unpkg.com/vue@3.4.21/dist/vue.global.prod.js"></script>
+    <script src="https://unpkg.com/vue-json-pretty@2.4.0/lib/vue-json-pretty.js"></script>
     <style>
       :root {
         /* Backgrounds - layered depth */
@@ -55,6 +55,7 @@
         /* Text */
         --text-primary: #e8e8e8;
         --text-secondary: #a0a0a0;
+        --text-secondary-on-active: #d4d4d4;
         --text-muted: #6a6a6a;
 
         /* JSON syntax highlighting (VS Code colors) */
@@ -226,6 +227,10 @@
         padding: 40px 20px;
       }
 
+      .row.selected .empty-state {
+        color: var(--text-secondary-on-active);
+      }
+
       .close-btn {
         background: var(--bg-hover);
         border: 1px solid var(--border);
@@ -336,7 +341,7 @@
     </style>
   </head>
   <body>
-    <div id="app" class="container">
+    <main id="app" class="container">
       <div class="card">
         <h1>fknjsn</h1>
         <div class="rows-container">
@@ -447,7 +452,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </main>
 
     <script>
       const { createApp, ref, computed, onMounted, onUnmounted, watch, nextTick } = Vue;
