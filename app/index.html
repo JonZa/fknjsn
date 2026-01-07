@@ -32,6 +32,10 @@
 
     <!-- Performance -->
     <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="preconnect" href="https://cloud.umami.is" crossorigin>
+
+    <!-- Analytics -->
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="e100de3a-6580-40d0-a423-78091b66bfec"></script>
 
     <link
       rel="stylesheet"
@@ -802,6 +806,11 @@
               } else if (row.blocks.length < 4) {
                 // Otherwise add a new column if under limit
                 addJSONBlock(selectedRowId.value, json);
+              }
+
+              // Track successful paste
+              if (typeof umami !== 'undefined') {
+                umami.track('json-paste');
               }
             } catch (err) {
               console.error("Invalid JSON pasted:", err);
