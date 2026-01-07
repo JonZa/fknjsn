@@ -1,664 +1,757 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>fknjsn</title>
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <script src="https://unpkg.com/vue@3.4.21/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/vue-json-pretty@2.4.0/lib/vue-json-pretty.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/vue-json-pretty@2.4.0/lib/styles.css"
+    />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+      :root {
+        /* Backgrounds - layered depth */
+        --bg-base: #1e1e1e;
+        --bg-surface: #252526;
+        --bg-elevated: #2d2d2d;
+        --bg-hover: #37373d;
+        --bg-active: #094771;
+
+        /* Borders */
+        --border: #3c3c3c;
+        --border-focus: #007acc;
+
+        /* Text */
+        --text-primary: #e8e8e8;
+        --text-secondary: #a0a0a0;
+        --text-muted: #6a6a6a;
+
+        /* JSON syntax highlighting (VS Code colors) */
+        --json-key: #9cdcfe;
+        --json-string: #ce9178;
+        --json-number: #b5cea8;
+        --json-boolean: #569cd6;
+        --json-null: #569cd6;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scrollbar-gutter: stable;
+        scrollbar-color: #5a5a5a var(--bg-base);
+        scrollbar-width: thin;
+      }
+
+      /* Custom scrollbars */
+      ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg-base);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #5a5a5a;
+        border-radius: 5px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #6e6e6e;
+      }
+
+      ::selection {
+        background: var(--bg-active);
+        color: white;
+      }
+
+      body {
+        font-family: "Courier New", Courier, monospace;
+        background: var(--bg-base);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        padding-left: 3rem;
+        color: var(--text-primary);
+      }
+
+      .container {
+        width: 100%;
+      }
+
+      .card {
+        background: var(--bg-surface);
+        overflow: hidden;
+      }
+
+      h1 {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        background: var(--bg-base);
+        color: var(--text-primary);
+        padding: 0.5rem;
+        font-size: 32px;
+        font-weight: 400;
+        text-transform: uppercase;
+        writing-mode: vertical-rl;
+        text-orientation: upright;
+        letter-spacing: 0.2em;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        z-index: 100;
+        width: 3rem;
+        border-right: 1px solid var(--border);
+      }
+
+      .rows-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .row {
+        position: relative;
+        display: flex;
+        gap: 20px;
+        padding: 20px;
+        min-height: 25vh;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        border-bottom: 1px solid var(--border);
+
+        &:nth-child(odd) {
+          background: var(--bg-surface);
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            padding: 20px;
+        &:nth-child(even) {
+          background: var(--bg-elevated);
         }
 
-        .container {
-            width: 100%;
-            max-width: 1200px;
+        &:hover {
+          background: var(--bg-hover);
         }
 
-        .card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-            padding: 40px;
+        &.selected {
+          outline: 2px solid var(--border-focus);
+          outline-offset: -2px;
+          background: var(--bg-active);
         }
 
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 28px;
-            font-weight: 600;
+        &:focus {
+          outline: 2px solid var(--border-focus);
+          outline-offset: -2px;
+        }
+      }
+
+      .json-block {
+        flex: 1;
+        min-width: 300px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .search-input {
+        flex: 1;
+        height: 32px;
+        padding: 0 12px;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        font-size: 14px;
+        font-family: inherit;
+        background: var(--bg-elevated);
+        color: var(--text-primary);
+        transition: border-color 0.15s ease;
+
+        &::placeholder {
+          color: var(--text-secondary);
         }
 
-        .textarea-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
+        &:focus {
+          outline: none;
+          border-color: var(--border-focus);
+        }
+      }
+
+      .json-viewer {
+        flex: 1;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 15px;
+        background: var(--bg-elevated);
+        font-family: "Courier New", Courier, monospace;
+        font-size: 14px;
+        overflow: auto;
+      }
+
+      .empty-state {
+        color: var(--text-secondary);
+        text-align: center;
+        padding: 40px 20px;
+      }
+
+      .close-btn {
+        background: var(--bg-hover);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-primary);
+        cursor: pointer;
+        transition: all 0.15s ease;
+
+        &:hover {
+          background: #f14c4c;
+          color: white;
+          border-color: #f14c4c;
+        }
+      }
+
+      .row-close-btn,
+      .empty-column-close-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+      }
+
+      .json-block,
+      .empty-column {
+        position: relative;
+      }
+
+      .add-column-btn {
+        background: var(--bg-hover);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        align-self: center;
+        color: var(--text-primary);
+        cursor: pointer;
+        transition: all 0.15s ease;
+
+        &:hover {
+          background: var(--bg-elevated);
+          color: white;
+          border-color: var(--border-focus);
         }
 
-        .textarea-wrapper {
-            display: flex;
-            flex-direction: column;
+        &:active {
+          transform: scale(0.95);
         }
+      }
 
-        label {
-            margin-bottom: 10px;
-            color: #555;
-            font-size: 14px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+      .search-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
 
-        textarea {
-            width: 100%;
-            min-height: 400px;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 14px;
-            line-height: 1.5;
-            resize: vertical;
-            transition: border-color 0.3s ease;
-        }
+      .empty-column {
+        flex: 1;
+        min-width: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed var(--text-muted);
+        border-radius: 4px;
+        color: var(--text-secondary);
+        min-height: 100px;
+        cursor: pointer;
+        transition: all 0.15s ease;
 
-        textarea:focus {
-            outline: none;
-            border-color: #667eea;
+        &:hover {
+          border-color: var(--border-focus);
+          color: var(--text-primary);
         }
+      }
 
-        #output {
-            background-color: #f8f9fa;
-            cursor: not-allowed;
-        }
-
-        #output.error {
-            color: #dc3545;
-            background-color: #fff5f5;
-            border-color: #dc3545;
-        }
-
-        .textarea-with-buttons {
-            position: relative;
-        }
-
-        .copy-btn {
-            padding: 8px 12px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .copy-btn:hover {
-            background: #5a67d8;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-        }
-
-        .copy-btn:active {
-            transform: translateY(0);
-        }
-
-        .copy-btn.copied {
-            background: #48bb78;
-        }
-
-        .copy-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .button-group-overlay {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            display: flex;
-            gap: 10px;
-            z-index: 10;
-        }
-
-        .pin-btn {
-            padding: 8px 12px;
-            background: #764ba2;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .pin-btn:hover {
-            background: #68409a;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(118, 75, 162, 0.3);
-        }
-
-        .pin-btn:active {
-            transform: translateY(0);
-        }
-
-        .pinned-outputs {
-            margin-top: 30px;
-        }
-
-        .pinned-section {
-            margin-bottom: 20px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-        }
-
-        .pinned-label {
-            color: #333;
-            font-weight: 600;
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        .pinned-textarea {
-            width: 100%;
-            min-height: 200px;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 14px;
-            line-height: 1.5;
-            resize: vertical;
-            background-color: white;
-        }
-
-        .remove-btn {
-            padding: 8px 16px;
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .remove-btn:hover {
-            background: #c82333;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
-        }
-
-        .remove-btn:active {
-            transform: translateY(0);
-        }
-
-        .maximize-btn {
-            padding: 8px 12px;
-            background: #28a745;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .maximize-btn:hover {
-            background: #218838;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
-        }
-
-        .maximize-btn:active {
-            transform: translateY(0);
-        }
-
-        .pin-name-input {
-            position: absolute;
-            top: 50px;
-            right: 10px;
-            width: 200px;
-            padding: 8px;
-            border: 2px solid #667eea;
-            border-radius: 6px;
-            font-size: 12px;
-            background: white;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            z-index: 20;
-            display: none;
-        }
-
-        .pin-name-input:focus {
-            outline: none;
-            border-color: #5a67d8;
-        }
-
-        .pin-name-input.show {
-            display: block;
-        }
-
-        .download-btn {
-            padding: 8px 12px;
-            background: #fd7e14;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .download-btn:hover {
-            background: #e8590c;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(253, 126, 20, 0.3);
-        }
-
-        .download-btn:active {
-            transform: translateY(0);
-        }
-
-        button img {
-            filter: brightness(0) invert(1);
-        }
-
-        .search-container {
-            margin-bottom: 10px;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 10px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            font-size: 14px;
-            transition: border-color 0.3s ease;
-            background-color: #f8f9fa;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: #667eea;
-            background-color: white;
-        }
-
-        @media (max-width: 768px) {
-            .textarea-container {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .card {
-                padding: 20px;
-            }
-            
-            h1 {
-                font-size: 24px;
-                margin-bottom: 20px;
-            }
-            
-            textarea {
-                min-height: 250px;
-            }
-        }
+      /* vue-json-pretty dark theme overrides */
+      .vjs-tree {
+        background: transparent !important;
+        color: var(--text-primary) !important;
+      }
+      .vjs-key {
+        color: var(--json-key) !important;
+      }
+      .vjs-value-string {
+        color: var(--json-string) !important;
+      }
+      .vjs-value-number {
+        color: var(--json-number) !important;
+      }
+      .vjs-value-boolean {
+        color: var(--json-boolean) !important;
+      }
+      .vjs-value-null {
+        color: var(--json-null) !important;
+      }
+      .vjs-tree-node:hover {
+        background: var(--bg-hover) !important;
+      }
     </style>
-</head>
-<body>
-    <div class="container">
-        <div class="card">
-            <h1>fknjsn</h1>
-            <div class="textarea-container">
-                <div class="textarea-wrapper">
-                    <label for="input">Input JSON</label>
-                    <textarea id="input" placeholder="Paste or type your JSON here..."></textarea>
-                </div>
-                <div class="textarea-wrapper">
-                    <label for="output">Formatted Output</label>
-                    <div class="search-container">
-                        <input type="text" id="searchInput" placeholder="Search JSON..." class="search-input">
-                    </div>
-                    <div class="textarea-with-buttons">
-                        <textarea id="output" placeholder="Formatted JSON will appear here..." readonly></textarea>
-                        <div class="button-group-overlay">
-                            <button id="copyBtn" class="copy-btn"><img src="icons/copy.svg" alt="Copy" width="24" height="24"></button>
-                            <button id="pinBtn" class="pin-btn"><img src="icons/paperclip.svg" alt="Pin" width="24" height="24"></button>
-                            <button id="downloadBtn" class="download-btn"><img src="icons/download.svg" alt="Download" width="24" height="24"></button>
-                            <button id="maximizeBtn" class="maximize-btn"><img src="icons/maximize.svg" alt="Maximize" width="24" height="24"></button>
-                        </div>
-                    </div>
-                </div>
+  </head>
+  <body>
+    <div id="app" class="container">
+      <div class="card">
+        <h1>fknjsn</h1>
+        <div class="rows-container">
+          <div
+            v-for="(row, index) in rows"
+            :key="row.id"
+            class="row"
+            :class="{ selected: selectedRowId === row.id }"
+            tabindex="0"
+            @click="selectRow(row.id)"
+            @keydown.enter="selectRow(row.id)"
+          >
+            <button
+              v-if="rows.length > 4 || row.blocks.some(b => b.data !== null)"
+              class="close-btn row-close-btn"
+              @click.stop="removeRow(row.id)"
+              title="Remove row"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+            <div v-if="row.blocks.length === 0" class="empty-state">
+              CLICK HERE. PASTE JSON.
             </div>
-            <div id="pinnedOutputs" class="pinned-outputs"></div>
+            <template v-for="block in row.blocks" :key="block.id">
+              <div v-if="block.data === null" class="empty-column">
+                Paste JSON here
+                <button
+                  class="close-btn empty-column-close-btn"
+                  @click.stop="removeColumn(row.id, block.id)"
+                  title="Remove column"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+              <div v-else class="json-block">
+                <div class="search-row">
+                  <input
+                    v-model="block.search"
+                    placeholder="Search JSON..."
+                    class="search-input"
+                  />
+                  <button
+                    class="close-btn"
+                    @click.stop="removeColumn(row.id, block.id)"
+                    title="Remove column"
+                  >
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+                <div class="json-viewer">
+                  <vue-json-pretty
+                    :data="block.filteredData"
+                    :deep="Infinity"
+                    :show-length="true"
+                    :show-icon="true"
+                  />
+                </div>
+              </div>
+            </template>
+            <button
+              v-if="row.blocks.length < 4 && row.blocks.some(b => b.data !== null)"
+              class="add-column-btn"
+              @click.stop="addColumn(row.id)"
+              title="Add column"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const inputTextarea = document.getElementById('input');
-            const outputTextarea = document.getElementById('output');
-            const copyBtn = document.getElementById('copyBtn');
-            const pinBtn = document.getElementById('pinBtn');
-            const downloadBtn = document.getElementById('downloadBtn');
-            const maximizeBtn = document.getElementById('maximizeBtn');
-            const pinnedOutputs = document.getElementById('pinnedOutputs');
-            const searchInput = document.getElementById('searchInput');
-            let pinnedCounter = 0;
-            let pinnedData = [];
-            let originalFormattedJSON = '';
-            let currentSearchQuery = '';
+      const { createApp, ref, computed, onMounted, onUnmounted, watch, nextTick } = Vue;
 
-            function savePinnedToLocalStorage() {
-                localStorage.setItem('pinnedOutputs', JSON.stringify(pinnedData));
+      createApp({
+        components: {
+          VueJsonPretty: VueJsonPretty.default,
+        },
+        setup() {
+          const rows = ref([
+            { id: 1, blocks: [] },
+            { id: 2, blocks: [] },
+            { id: 3, blocks: [] },
+            { id: 4, blocks: [] },
+          ]);
+          const selectedRowId = ref(1);
+          let blockIdCounter = 0;
+          let rowIdCounter = 4;
+
+          function selectRow(id) {
+            selectedRowId.value = id;
+          }
+
+          function filterJSON(data, search) {
+            if (!search) return data;
+
+            const lowerQuery = search.toLowerCase();
+
+            function searchInValue(value, key = "") {
+              // Check if key matches
+              if (key.toLowerCase().includes(lowerQuery)) {
+                return true;
+              }
+
+              // Check if value matches (for primitives)
+              if (
+                typeof value === "string" &&
+                value.toLowerCase().includes(lowerQuery)
+              ) {
+                return true;
+              }
+              if (
+                typeof value === "number" &&
+                value.toString().includes(lowerQuery)
+              ) {
+                return true;
+              }
+              if (
+                typeof value === "boolean" &&
+                value.toString().includes(lowerQuery)
+              ) {
+                return true;
+              }
+
+              return false;
             }
 
-            function loadPinnedFromLocalStorage() {
-                const saved = localStorage.getItem('pinnedOutputs');
-                if (saved) {
-                    pinnedData = JSON.parse(saved);
-                    pinnedData.forEach((item, index) => {
-                        pinnedCounter = Math.max(pinnedCounter, item.id || index + 1);
-                        createPinnedSection(item.content, item.id || index + 1, false, item.name);
-                    });
-                }
-            }
-
-            function filterJSONObject(obj, query) {
-                const lowerQuery = query.toLowerCase();
-                
-                function searchInValue(value, key = '') {
-                    // Check if key matches
-                    if (key.toLowerCase().includes(lowerQuery)) {
-                        return true;
+            function filterRecursive(obj) {
+              if (Array.isArray(obj)) {
+                const filtered = [];
+                obj.forEach((item) => {
+                  if (typeof item === "object" && item !== null) {
+                    const filteredItem = filterRecursive(item);
+                    if (Object.keys(filteredItem).length > 0) {
+                      filtered.push(filteredItem);
                     }
-                    
-                    // Check if value matches (for primitives)
-                    if (typeof value === 'string' && value.toLowerCase().includes(lowerQuery)) {
-                        return true;
-                    }
-                    if (typeof value === 'number' && value.toString().includes(lowerQuery)) {
-                        return true;
-                    }
-                    
-                    return false;
-                }
-                
-                function filterRecursive(obj, path = '') {
-                    if (Array.isArray(obj)) {
-                        const filtered = [];
-                        obj.forEach((item, index) => {
-                            if (typeof item === 'object' && item !== null) {
-                                const filteredItem = filterRecursive(item, `${path}[${index}]`);
-                                if (Object.keys(filteredItem).length > 0) {
-                                    filtered.push(filteredItem);
-                                }
-                            } else if (searchInValue(item)) {
-                                filtered.push(item);
-                            }
-                        });
-                        return filtered;
-                    }
-                    
-                    if (typeof obj === 'object' && obj !== null) {
-                        const filtered = {};
-                        for (const [key, value] of Object.entries(obj)) {
-                            const currentPath = path ? `${path}.${key}` : key;
-                            
-                            if (typeof value === 'object' && value !== null) {
-                                const filteredValue = filterRecursive(value, currentPath);
-                                if ((Array.isArray(filteredValue) && filteredValue.length > 0) || 
-                                    (!Array.isArray(filteredValue) && Object.keys(filteredValue).length > 0)) {
-                                    filtered[key] = filteredValue;
-                                } else if (searchInValue(value, key)) {
-                                    filtered[key] = value;
-                                }
-                            } else if (searchInValue(value, key)) {
-                                filtered[key] = value;
-                            }
-                        }
-                        return filtered;
-                    }
-                    
-                    return obj;
-                }
-                
-                return filterRecursive(obj);
-            }
-
-            function applySearchFilter() {
-                if (!currentSearchQuery.trim() || !originalFormattedJSON) {
-                    outputTextarea.value = originalFormattedJSON;
-                    return;
-                }
-                
-                try {
-                    const parsedJSON = JSON.parse(originalFormattedJSON);
-                    const filteredJSON = filterJSONObject(parsedJSON, currentSearchQuery);
-                    
-                    if (Object.keys(filteredJSON).length === 0 && filteredJSON.constructor === Object) {
-                        outputTextarea.value = '// No matches found';
-                    } else {
-                        outputTextarea.value = JSON.stringify(filteredJSON, null, 2);
-                    }
-                } catch (error) {
-                    outputTextarea.value = originalFormattedJSON;
-                }
-            }
-
-            function formatJSON() {
-                const inputValue = inputTextarea.value.trim();
-                
-                if (!inputValue) {
-                    outputTextarea.value = '';
-                    originalFormattedJSON = '';
-                    outputTextarea.classList.remove('error');
-                    return;
-                }
-
-                try {
-                    const parsedJSON = JSON.parse(inputValue);
-                    const formattedJSON = JSON.stringify(parsedJSON, null, 2);
-                    originalFormattedJSON = formattedJSON;
-                    
-                    // Apply search filter if there's a search query
-                    if (currentSearchQuery.trim()) {
-                        applySearchFilter();
-                    } else {
-                        outputTextarea.value = formattedJSON;
-                    }
-                    
-                    outputTextarea.classList.remove('error');
-                } catch (error) {
-                    outputTextarea.value = 'Invalid JSON';
-                    originalFormattedJSON = '';
-                    outputTextarea.classList.add('error');
-                }
-            }
-
-            function copyToClipboard(textContent, button) {
-                if (textContent) {
-                    navigator.clipboard.writeText(textContent)
-                        .then(() => {
-                            const originalHTML = button.innerHTML;
-                            button.innerHTML = 'Copied!';
-                            button.classList.add('copied');
-                            setTimeout(() => {
-                                button.innerHTML = originalHTML;
-                                button.classList.remove('copied');
-                            }, 2000);
-                        })
-                        .catch(err => {
-                            console.error('Failed to copy: ', err);
-                        });
-                }
-            }
-
-            function createPinnedSection(content, id, prepend = true, customName = null) {
-                const pinnedId = `pinned-${id}`;
-                
-                const pinnedSection = document.createElement('div');
-                pinnedSection.className = 'pinned-section';
-                pinnedSection.setAttribute('data-pinned-id', id);
-                const displayName = customName ? `${customName} (#${id})` : `Pinned Output #${id}`;
-                pinnedSection.innerHTML = `
-                    <label class="pinned-label">${displayName}</label>
-                    <div class="textarea-with-buttons">
-                        <textarea id="${pinnedId}" class="pinned-textarea" readonly>${content}</textarea>
-                        <div class="button-group-overlay">
-                            <button class="copy-btn pinned-copy" data-pinned-id="${pinnedId}"><img src="icons/copy.svg" alt="Copy" width="24" height="24"></button>
-                            <button class="download-btn pinned-download" data-pinned-id="${pinnedId}"><img src="icons/download.svg" alt="Download" width="24" height="24"></button>
-                            <button class="remove-btn" data-pinned-id="${id}"><img src="icons/trash.svg" alt="Remove" width="24" height="24"></button>
-                        </div>
-                    </div>
-                `;
-                
-                if (prepend && pinnedOutputs.firstChild) {
-                    pinnedOutputs.insertBefore(pinnedSection, pinnedOutputs.firstChild);
-                } else {
-                    pinnedOutputs.appendChild(pinnedSection);
-                }
-                
-                const pinnedCopyBtn = pinnedSection.querySelector('.pinned-copy');
-                const pinnedDownloadBtn = pinnedSection.querySelector('.pinned-download');
-                const removeBtn = pinnedSection.querySelector('.remove-btn');
-                const pinnedTextarea = pinnedSection.querySelector('.pinned-textarea');
-                
-                // Auto-resize to content height
-                const lines = content.split('\n').length;
-                const lineHeight = 21;
-                const padding = 30;
-                const autoHeight = Math.max(200, (lines * lineHeight) + padding);
-                pinnedTextarea.style.height = autoHeight + 'px';
-                
-                pinnedCopyBtn.addEventListener('click', function() {
-                    copyToClipboard(pinnedTextarea.value, this);
+                  } else if (searchInValue(item)) {
+                    filtered.push(item);
+                  }
                 });
-                
-                pinnedDownloadBtn.addEventListener('click', function() {
-                    const filename = customName ? `${customName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.json` : `pinned_output_${id}.json`;
-                    downloadJSON(pinnedTextarea.value, filename);
-                });
-                
-                removeBtn.addEventListener('click', function() {
-                    const idToRemove = parseInt(this.getAttribute('data-pinned-id'));
-                    pinnedData = pinnedData.filter(item => item.id !== idToRemove);
-                    savePinnedToLocalStorage();
-                    pinnedSection.remove();
-                });
-            }
+                return filtered;
+              }
 
-            function pinOutput() {
-                if (outputTextarea.value && !outputTextarea.classList.contains('error')) {
-                    const customName = prompt('Enter a name for this pinned output (optional):');
-                    
-                    pinnedCounter++;
-                    const newPinned = {
-                        id: pinnedCounter,
-                        content: outputTextarea.value,
-                        name: customName && customName.trim() ? customName.trim() : null
-                    };
-                    
-                    pinnedData.unshift(newPinned);
-                    savePinnedToLocalStorage();
-                    createPinnedSection(newPinned.content, newPinned.id, true, newPinned.name);
-                }
-            }
-
-            function maximizeTextarea() {
-                if (outputTextarea.value && !outputTextarea.classList.contains('error')) {
-                    const lines = outputTextarea.value.split('\n').length;
-                    const lineHeight = 21; // 14px font-size * 1.5 line-height
-                    const padding = 30; // top and bottom padding
-                    const newHeight = Math.max(400, (lines * lineHeight) + padding);
-                    
-                    outputTextarea.style.height = newHeight + 'px';
-                    
-                    maximizeBtn.innerHTML = '<img src="icons/maximize.svg" alt="Reset" width="24" height="24">';
-                    maximizeBtn.onclick = function() {
-                        outputTextarea.style.height = '';
-                        maximizeBtn.innerHTML = '<img src="icons/maximize.svg" alt="Maximize" width="24" height="24">';
-                        maximizeBtn.onclick = maximizeTextarea;
-                    };
-                }
-            }
-
-            function downloadJSON(content, filename = 'formatted.json') {
-                if (content && !outputTextarea.classList.contains('error')) {
-                    const blob = new Blob([content], { type: 'application/json' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = filename;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                }
-            }
-
-            loadPinnedFromLocalStorage();
-
-            // Search functionality with debouncing
-            let searchTimeout;
-            function handleSearchInput() {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    currentSearchQuery = searchInput.value;
-                    if (originalFormattedJSON) {
-                        applySearchFilter();
+              if (typeof obj === "object" && obj !== null) {
+                const filtered = {};
+                for (const [key, value] of Object.entries(obj)) {
+                  if (typeof value === "object" && value !== null) {
+                    const filteredValue = filterRecursive(value);
+                    if (
+                      (Array.isArray(filteredValue) &&
+                        filteredValue.length > 0) ||
+                      (!Array.isArray(filteredValue) &&
+                        Object.keys(filteredValue).length > 0)
+                    ) {
+                      filtered[key] = filteredValue;
+                    } else if (searchInValue(value, key)) {
+                      filtered[key] = value;
                     }
-                }, 300);
+                  } else if (searchInValue(value, key)) {
+                    filtered[key] = value;
+                  }
+                }
+                return filtered;
+              }
+
+              return obj;
             }
 
-            inputTextarea.addEventListener('input', formatJSON);
-            inputTextarea.addEventListener('paste', function() {
-                setTimeout(formatJSON, 10);
+            const result = filterRecursive(data);
+
+            // Check if result is empty
+            if (typeof result === "object" && result !== null) {
+              if (Array.isArray(result) && result.length === 0) {
+                return { "No matches": "Try a different search term" };
+              }
+              if (!Array.isArray(result) && Object.keys(result).length === 0) {
+                return { "No matches": "Try a different search term" };
+              }
+            }
+
+            return result;
+          }
+
+          function addJSONBlock(rowId, jsonData) {
+            const row = rows.value.find((r) => r.id === rowId);
+            if (row) {
+              row.blocks.push({
+                id: ++blockIdCounter,
+                data: jsonData,
+                search: "",
+                filteredData: jsonData,
+              });
+            }
+          }
+
+          function addColumn(rowId) {
+            const row = rows.value.find((r) => r.id === rowId);
+            if (row && row.blocks.length < 4) {
+              row.blocks.push({
+                id: ++blockIdCounter,
+                data: null,
+                search: "",
+                filteredData: null,
+              });
+            }
+          }
+
+          function addRow() {
+            const newRow = {
+              id: ++rowIdCounter,
+              blocks: [],
+            };
+            rows.value.push(newRow);
+            selectedRowId.value = newRow.id;
+          }
+
+          function removeRow(rowId) {
+            const index = rows.value.findIndex((r) => r.id === rowId);
+            if (index !== -1) {
+              rows.value.splice(index, 1);
+              // Ensure at least 4 rows remain
+              while (rows.value.length < 4) {
+                rows.value.push({ id: ++rowIdCounter, blocks: [] });
+              }
+              // Update selection if needed
+              if (selectedRowId.value === rowId) {
+                selectedRowId.value = rows.value[0]?.id ?? null;
+              }
+            }
+          }
+
+          function removeColumn(rowId, blockId) {
+            const row = rows.value.find((r) => r.id === rowId);
+            if (row) {
+              const index = row.blocks.findIndex((b) => b.id === blockId);
+              if (index !== -1) {
+                row.blocks.splice(index, 1);
+              }
+            }
+          }
+
+          // Paste event handler
+          const handlePaste = (e) => {
+            // Don't intercept paste in input fields
+            const tag = document.activeElement?.tagName?.toLowerCase();
+            if (tag === "input" || tag === "textarea") return;
+
+            const text = e.clipboardData?.getData("text");
+            if (!text || !selectedRowId.value) return;
+
+            try {
+              const json = JSON.parse(text);
+              const row = rows.value.find(
+                (r) => r.id === selectedRowId.value
+              );
+              if (!row) return;
+
+              // First, try to fill an empty column
+              const emptyBlock = row.blocks.find((b) => b.data === null);
+              if (emptyBlock) {
+                emptyBlock.data = json;
+                emptyBlock.filteredData = json;
+              } else if (row.blocks.length < 4) {
+                // Otherwise add a new column if under limit
+                addJSONBlock(selectedRowId.value, json);
+              }
+            } catch (err) {
+              console.error("Invalid JSON pasted:", err);
+            }
+          };
+
+          onMounted(() => {
+            // Load saved state
+            const saved = localStorage.getItem("json-rows");
+            if (saved) {
+              try {
+                const savedData = JSON.parse(saved);
+                // Initialize filteredData for loaded blocks
+                rows.value = (savedData.rows || []).map((row) => ({
+                  ...row,
+                  blocks: row.blocks.map((block) => ({
+                    ...block,
+                    filteredData: block.data
+                      ? filterJSON(block.data, block.search || "")
+                      : null,
+                  })),
+                }));
+                if (rows.value.length === 0) {
+                  rows.value = [
+                    { id: 1, blocks: [] },
+                    { id: 2, blocks: [] },
+                    { id: 3, blocks: [] },
+                    { id: 4, blocks: [] },
+                  ];
+                }
+                selectedRowId.value = savedData.selectedRowId || 1;
+                blockIdCounter = savedData.blockIdCounter || 0;
+                rowIdCounter = savedData.rowIdCounter || 4;
+                // Ensure at least 4 rows
+                while (rows.value.length < 4) {
+                  rows.value.push({ id: ++rowIdCounter, blocks: [] });
+                }
+                // Cap at 4 rows if not all rows have data
+                const allHaveData = rows.value.every((row) =>
+                  row.blocks.some((b) => b.data !== null)
+                );
+                if (!allHaveData && rows.value.length > 4) {
+                  rows.value = rows.value.slice(0, 4);
+                }
+              } catch (e) {
+                console.error("Failed to load saved data:", e);
+              }
+            }
+
+            window.addEventListener("paste", handlePaste);
+          });
+
+          onUnmounted(() => {
+            window.removeEventListener("paste", handlePaste);
+          });
+
+          // Computed to track if all rows have data (avoids deep watch overhead)
+          const allRowsHaveData = computed(() =>
+            rows.value.length >= 4 &&
+            rows.value.every((row) => row.blocks.some((b) => b.data !== null))
+          );
+
+          // Auto-add row when all rows have data
+          watch(allRowsHaveData, (hasData) => {
+            if (hasData) {
+              addRow();
+              nextTick(() => {
+                window.scrollBy({
+                  top: window.innerHeight * 0.25,
+                  behavior: "smooth",
+                });
+              });
+            }
+          });
+
+          // Debounce utility
+          function debounce(fn, ms) {
+            let timeout;
+            return (...args) => {
+              clearTimeout(timeout);
+              timeout = setTimeout(() => fn(...args), ms);
+            };
+          }
+
+          // Save to localStorage (debounced to avoid excessive writes)
+          const saveToStorage = debounce(() => {
+            try {
+              localStorage.setItem(
+                "json-rows",
+                JSON.stringify({
+                  rows: rows.value.map((row) => ({
+                    ...row,
+                    blocks: row.blocks.map(({ filteredData, ...block }) => block),
+                  })),
+                  selectedRowId: selectedRowId.value,
+                  blockIdCounter,
+                  rowIdCounter,
+                })
+              );
+            } catch (e) {
+              console.error("Failed to save data:", e);
+            }
+          }, 500);
+
+          watch([rows, selectedRowId], saveToStorage, { deep: true });
+
+          // Update filteredData when data or search changes (debounced for typing performance)
+          const updateFilteredData = debounce(() => {
+            rows.value.forEach((row) => {
+              row.blocks.forEach((block) => {
+                if (block.data !== null) {
+                  block.filteredData = filterJSON(block.data, block.search);
+                }
+              });
             });
-            searchInput.addEventListener('input', handleSearchInput);
-            copyBtn.addEventListener('click', function() {
-                copyToClipboard(outputTextarea.value, this);
-            });
-            pinBtn.addEventListener('click', pinOutput);
-            downloadBtn.addEventListener('click', function() {
-                downloadJSON(outputTextarea.value);
-            });
-            maximizeBtn.addEventListener('click', maximizeTextarea);
-        });
+          }, 150);
+
+          watch(
+            () => rows.value.map((r) =>
+              r.blocks.map((b) => `${b.id}:${b.search}`).join(",")
+            ).join("|"),
+            updateFilteredData
+          );
+
+          return {
+            rows,
+            selectedRowId,
+            selectRow,
+            addColumn,
+            removeRow,
+            removeColumn,
+          };
+        },
+      }).mount("#app");
     </script>
-</body>
+  </body>
 </html>
