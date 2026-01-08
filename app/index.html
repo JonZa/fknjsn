@@ -10,36 +10,59 @@
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 
     <!-- SEO -->
-    <meta name="description" content="Compare JSON side-by-side. Paste, search, and diff multiple JSON blocks.">
-    <link rel="canonical" href="https://fknjsn.com/">
-    <meta name="theme-color" content="#1e1e1e">
+    <meta
+      name="description"
+      content="Compare JSON side-by-side. Paste, search, and diff multiple JSON blocks."
+    />
+    <link rel="canonical" href="https://fknjsn.com/" />
+    <meta name="theme-color" content="#1e1e1e" />
 
     <!-- Open Graph -->
-    <meta property="og:title" content="fknjsn - JSON Comparison Tool">
-    <meta property="og:description" content="Compare JSON side-by-side. Paste, search, and diff multiple JSON blocks.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://fknjsn.com/">
-    <meta property="og:site_name" content="fknjsn">
-    <meta property="og:image" content="https://fknjsn.com/og-image.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
+    <meta property="og:title" content="fknjsn - JSON Comparison Tool" />
+    <meta
+      property="og:description"
+      content="Compare JSON side-by-side. Paste, search, and diff multiple JSON blocks."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://fknjsn.com/" />
+    <meta property="og:site_name" content="fknjsn" />
+    <meta property="og:image" content="https://fknjsn.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
 
     <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="fknjsn - JSON Comparison Tool">
-    <meta name="twitter:description" content="Compare JSON side-by-side. Paste, search, and diff multiple JSON blocks.">
-    <meta name="twitter:image" content="https://fknjsn.com/og-image.png">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="fknjsn - JSON Comparison Tool" />
+    <meta
+      name="twitter:description"
+      content="Compare JSON side-by-side. Paste, search, and diff multiple JSON blocks."
+    />
+    <meta name="twitter:image" content="https://fknjsn.com/og-image.png" />
 
     <!-- Performance -->
-    <link rel="preconnect" href="https://unpkg.com" crossorigin>
-    <link rel="preconnect" href="https://cloud.umami.is" crossorigin>
+    <link rel="preconnect" href="https://unpkg.com" crossorigin />
+    <link rel="preconnect" href="https://cloud.umami.is" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <!-- Analytics -->
-    <script defer src="https://cloud.umami.is/script.js" data-website-id="e100de3a-6580-40d0-a423-78091b66bfec"></script>
+    <!-- Analytics (production only) -->
+    <script>
+      if (location.hostname === "fknjsn.com") {
+        const s = document.createElement("script");
+        s.defer = true;
+        s.src = "https://cloud.umami.is/script.js";
+        s.dataset.websiteId = "e100de3a-6580-40d0-a423-78091b66bfec";
+        document.head.appendChild(s);
+      }
+    </script>
 
     <link
       rel="stylesheet"
       href="https://unpkg.com/vue-json-pretty@2.4.0/lib/styles.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=add,backspace,cancel,close,delete&display=swap"
     />
     <script src="https://unpkg.com/vue@3.4.21/dist/vue.global.prod.js"></script>
     <script src="https://unpkg.com/vue-json-pretty@2.4.0/lib/vue-json-pretty.js"></script>
@@ -236,8 +259,8 @@
       }
 
       .close-btn {
-        background: var(--bg-hover);
-        border: 1px solid var(--border);
+        background: #e67e22;
+        border: 1px solid #e67e22;
         border-radius: 4px;
         width: 32px;
         height: 32px;
@@ -245,14 +268,17 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--text-primary);
+        color: white;
         cursor: pointer;
         transition: all 0.15s ease;
 
+        .material-symbols-outlined {
+          font-size: 18px;
+        }
+
         &:hover {
-          background: #f14c4c;
-          color: white;
-          border-color: #f14c4c;
+          background: #d35400;
+          border-color: #d35400;
         }
       }
 
@@ -261,6 +287,13 @@
         position: absolute;
         top: 8px;
         right: 8px;
+        background: #e74c3c;
+        border-color: #e74c3c;
+
+        &:hover {
+          background: #c0392b;
+          border-color: #c0392b;
+        }
       }
 
       .json-block,
@@ -269,8 +302,8 @@
       }
 
       .add-column-btn {
-        background: var(--bg-hover);
-        border: 1px solid var(--border);
+        background: white;
+        border: 1px solid #3498db;
         border-radius: 4px;
         width: 32px;
         height: 32px;
@@ -279,14 +312,18 @@
         align-items: center;
         justify-content: center;
         align-self: center;
-        color: var(--text-primary);
+        color: #3498db;
         cursor: pointer;
         transition: all 0.15s ease;
 
+        .material-symbols-outlined {
+          font-size: 20px;
+        }
+
         &:hover {
-          background: var(--bg-elevated);
+          background: #3498db;
           color: white;
-          border-color: var(--border-focus);
+          border-color: #3498db;
         }
 
         &:active {
@@ -348,16 +385,30 @@
         right: 6px;
         top: 50%;
         transform: translateY(-50%);
-        background: none;
+        background: var(--bg-hover);
         border: none;
-        color: var(--text-secondary);
+        border-radius: 3px;
+        color: var(--text-muted);
         cursor: pointer;
-        font-size: 16px;
-        padding: 4px;
+        padding: 2px;
         line-height: 1;
-      }
-      .search-clear-btn:hover {
-        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s ease;
+
+        .material-symbols-outlined {
+          font-size: 16px;
+        }
+
+        &.active {
+          background: #f39c12;
+          color: white;
+        }
+
+        &.active:hover {
+          background: #d68910;
+        }
       }
 
       /* New row highlight animation */
@@ -400,10 +451,18 @@
         max-width: 360px;
       }
 
-      .toast.error { border-left: 3px solid #f14c4c; }
-      .toast.warning { border-left: 3px solid #cca700; }
-      .toast.success { border-left: 3px solid #4ec9b0; }
-      .toast.info { border-left: 3px solid #007acc; }
+      .toast.error {
+        border-left: 3px solid #f14c4c;
+      }
+      .toast.warning {
+        border-left: 3px solid #cca700;
+      }
+      .toast.success {
+        border-left: 3px solid #4ec9b0;
+      }
+      .toast.info {
+        border-left: 3px solid #007acc;
+      }
 
       .toast-message {
         flex: 1;
@@ -423,16 +482,27 @@
         border: none;
         color: var(--text-secondary);
         cursor: pointer;
-        font-size: 18px;
         padding: 0 4px;
+        display: flex;
+        align-items: center;
+
+        .material-symbols-outlined {
+          font-size: 18px;
+        }
       }
       .toast-dismiss:hover {
         color: var(--text-primary);
       }
 
       @keyframes toast-in {
-        from { opacity: 0; transform: translateX(20px); }
-        to { opacity: 1; transform: translateX(0); }
+        from {
+          opacity: 0;
+          transform: translateX(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
       }
 
       /* vue-json-pretty dark theme overrides */
@@ -474,7 +544,10 @@
             @click="selectRow(row.id)"
             @keydown.enter="selectRow(row.id)"
           >
-            <span v-if="row.blocks.some(b => b.data !== null)" class="column-counter">
+            <span
+              v-if="row.blocks.some(b => b.data !== null)"
+              class="column-counter"
+            >
               {{ row.blocks.filter(b => b.data !== null).length }}/4
             </span>
             <button
@@ -483,17 +556,7 @@
               @click.stop="removeRow(row.id)"
               title="Remove row"
             >
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
+              <span class="material-symbols-outlined">delete</span>
             </button>
             <div v-if="row.blocks.length === 0" class="empty-state">
               CLICK HERE. PASTE JSON.
@@ -506,17 +569,7 @@
                   @click.stop="removeColumn(row.id, block.id)"
                   title="Remove column"
                 >
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
+                  <span class="material-symbols-outlined">cancel</span>
                 </button>
               </div>
               <div v-else class="json-block">
@@ -528,28 +581,20 @@
                       class="search-input"
                     />
                     <button
-                      v-if="block.search"
                       class="search-clear-btn"
+                      :class="{ active: block.search }"
                       @click.stop="block.search = ''"
                       title="Clear search"
-                    >&times;</button>
+                    >
+                      <span class="material-symbols-outlined">backspace</span>
+                    </button>
                   </div>
                   <button
                     class="close-btn"
                     @click.stop="removeColumn(row.id, block.id)"
                     title="Remove column"
                   >
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    >
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
+                    <span class="material-symbols-outlined">cancel</span>
                   </button>
                 </div>
                 <div class="json-viewer">
@@ -568,33 +613,40 @@
               @click.stop="addColumn(row.id)"
               title="Add column"
             >
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
+              <span class="material-symbols-outlined">add</span>
             </button>
           </div>
         </div>
         <!-- Toast notifications -->
         <div class="toast-container">
-          <div v-for="toast in toasts" :key="toast.id" class="toast" :class="toast.type">
+          <div
+            v-for="toast in toasts"
+            :key="toast.id"
+            class="toast"
+            :class="toast.type"
+          >
             <span class="toast-message">{{ toast.message }}</span>
-            <span v-if="toast.details" class="toast-details">{{ toast.details }}</span>
-            <button class="toast-dismiss" @click="dismissToast(toast.id)">&times;</button>
+            <span v-if="toast.details" class="toast-details"
+              >{{ toast.details }}</span
+            >
+            <button class="toast-dismiss" @click="dismissToast(toast.id)">
+              <span class="material-symbols-outlined">close</span>
+            </button>
           </div>
         </div>
       </div>
     </main>
 
     <script>
-      const { createApp, ref, computed, onMounted, onUnmounted, watch, nextTick } = Vue;
+      const {
+        createApp,
+        ref,
+        computed,
+        onMounted,
+        onUnmounted,
+        watch,
+        nextTick,
+      } = Vue;
 
       createApp({
         components: {
@@ -613,16 +665,21 @@
           let rowIdCounter = 4;
           let toastId = 0;
 
-          function showToast(message, type = 'info', details = null, duration = 4000) {
+          function showToast(
+            message,
+            type = "info",
+            details = null,
+            duration = 4000
+          ) {
             const id = ++toastId;
             toasts.value.push({ id, message, type, details });
             setTimeout(() => {
-              toasts.value = toasts.value.filter(t => t.id !== id);
+              toasts.value = toasts.value.filter((t) => t.id !== id);
             }, duration);
           }
 
           function dismissToast(id) {
-            toasts.value = toasts.value.filter(t => t.id !== id);
+            toasts.value = toasts.value.filter((t) => t.id !== id);
           }
 
           function selectRow(id) {
@@ -719,6 +776,60 @@
             return result;
           }
 
+          function getDemoData() {
+            return {
+              rows: [
+                { id: 1, blocks: [] },
+                {
+                  id: 2,
+                  blocks: [
+                    {
+                      id: 1,
+                      data: {
+                        works: true,
+                        why: "no idea",
+                        bugs: 0,
+                        coffee: "needed",
+                      },
+                      search: "",
+                    },
+                  ],
+                },
+                {
+                  id: 3,
+                  blocks: [
+                    {
+                      id: 2,
+                      data: {
+                        works: false,
+                        ffs: true,
+                        why: "still no idea",
+                        bugs: 47,
+                        coffee: "empty",
+                      },
+                      search: "ffs",
+                    },
+                    {
+                      id: 3,
+                      data: {
+                        works: true,
+                        ffs: false,
+                        why: "still no idea",
+                        bugs: 0,
+                        coffee: "hot",
+                      },
+                      search: "ffs",
+                    },
+                  ],
+                },
+                { id: 4, blocks: [] },
+              ],
+              blockIdCounter: 3,
+              rowIdCounter: 4,
+              selectedRowId: 2,
+            };
+          }
+
           function addJSONBlock(rowId, jsonData) {
             const row = rows.value.find((r) => r.id === rowId);
             if (row) {
@@ -752,7 +863,9 @@
             rows.value.push(newRow);
             selectedRowId.value = newRow.id;
             // Clear the flag after animation completes
-            setTimeout(() => { newRow.justAdded = false; }, 1000);
+            setTimeout(() => {
+              newRow.justAdded = false;
+            }, 1000);
           }
 
           function removeRow(rowId) {
@@ -767,7 +880,8 @@
               if (selectedRowId.value === rowId) {
                 const newIndex = Math.min(index, rows.value.length - 1);
                 const adjacentIndex = index > 0 ? index - 1 : newIndex;
-                selectedRowId.value = rows.value[adjacentIndex]?.id ?? rows.value[0]?.id;
+                selectedRowId.value =
+                  rows.value[adjacentIndex]?.id ?? rows.value[0]?.id;
               }
             }
           }
@@ -793,9 +907,7 @@
 
             try {
               const json = JSON.parse(text);
-              const row = rows.value.find(
-                (r) => r.id === selectedRowId.value
-              );
+              const row = rows.value.find((r) => r.id === selectedRowId.value);
               if (!row) return;
 
               // First, try to fill an empty column
@@ -809,8 +921,8 @@
               }
 
               // Track successful paste
-              if (typeof umami !== 'undefined') {
-                umami.track('json-paste');
+              if (typeof umami !== "undefined") {
+                umami.track("json-paste");
               }
             } catch (err) {
               console.error("Invalid JSON pasted:", err);
@@ -859,6 +971,21 @@
               } catch (e) {
                 console.error("Failed to load saved data:", e);
               }
+            } else {
+              // Load demo data for first-time users
+              const demoData = getDemoData();
+              rows.value = demoData.rows.map((row) => ({
+                ...row,
+                blocks: row.blocks.map((block) => ({
+                  ...block,
+                  filteredData: block.data
+                    ? filterJSON(block.data, block.search || "")
+                    : null,
+                })),
+              }));
+              selectedRowId.value = demoData.selectedRowId;
+              blockIdCounter = demoData.blockIdCounter;
+              rowIdCounter = demoData.rowIdCounter;
             }
 
             window.addEventListener("paste", handlePaste);
@@ -869,9 +996,10 @@
           });
 
           // Computed to track if all rows have data (avoids deep watch overhead)
-          const allRowsHaveData = computed(() =>
-            rows.value.length >= 4 &&
-            rows.value.every((row) => row.blocks.some((b) => b.data !== null))
+          const allRowsHaveData = computed(
+            () =>
+              rows.value.length >= 4 &&
+              rows.value.every((row) => row.blocks.some((b) => b.data !== null))
           );
 
           // Auto-add row when all rows have data
@@ -904,7 +1032,9 @@
                 JSON.stringify({
                   rows: rows.value.map(({ justAdded, ...row }) => ({
                     ...row,
-                    blocks: row.blocks.map(({ filteredData, ...block }) => block),
+                    blocks: row.blocks.map(
+                      ({ filteredData, ...block }) => block
+                    ),
                   })),
                   selectedRowId: selectedRowId.value,
                   blockIdCounter,
@@ -931,9 +1061,12 @@
           }, 150);
 
           watch(
-            () => rows.value.map((r) =>
-              r.blocks.map((b) => `${b.id}:${b.search}`).join(",")
-            ).join("|"),
+            () =>
+              rows.value
+                .map((r) =>
+                  r.blocks.map((b) => `${b.id}:${b.search}`).join(",")
+                )
+                .join("|"),
             updateFilteredData
           );
 
