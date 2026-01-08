@@ -1,13 +1,15 @@
 # fknjsn
 
-A JSON comparison tool. Paste JSON, compare side-by-side, search within blocks.
+100% client-side JSON formatter, filter, and comparison tool. Your data never leaves your browser.
 
 ## Features
 
-- **Row/Column Layout** - Compare up to 4 JSON blocks per row
-- **Live Search** - Filter JSON by keys or values within each block
+- **100% Client-Side** - No server, no uploads, your data stays local
+- **JSON Formatting** - Pretty-print and syntax highlight any JSON
+- **Live Filtering** - Search/filter JSON by keys or values
+- **Side-by-Side Comparison** - Up to 4 JSON blocks per row
 - **Dark Mode** - VS Code-inspired theme
-- **Persistent Storage** - Rows and data saved to localStorage
+- **Persistent Storage** - Saved to localStorage (still local)
 - **No Build Step** - Single HTML file, CDN dependencies
 
 ## Usage
