@@ -4,7 +4,7 @@ This file provides guidance to Claude Code when working with this repository.
 
 ## Project Overview
 
-A JSON comparison tool built with Vue 3. Paste JSON into rows, compare side-by-side in columns, search within each block. Dark mode IDE-like interface.
+100% client-side JSON formatter, filter, and comparison tool built with Vue 3. Paste JSON, compare side-by-side, filter within blocks. Data never leaves the browser. Dark mode IDE-like interface.
 
 ## Development Commands
 

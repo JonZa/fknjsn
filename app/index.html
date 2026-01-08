@@ -12,16 +12,20 @@
     <!-- SEO -->
     <meta
       name="description"
-      content="Compare JSON side-by-side. Paste, search, and diff multiple JSON blocks."
+      content="100% client-side JSON formatter, filter, and comparison tool. Your data never leaves your browser."
+    />
+    <meta
+      name="keywords"
+      content="JSON, formatter, filter, compare, diff, viewer, client-side, privacy, no upload, browser"
     />
     <link rel="canonical" href="https://fknjsn.com/" />
     <meta name="theme-color" content="#1e1e1e" />
 
     <!-- Open Graph -->
-    <meta property="og:title" content="fknjsn - JSON Comparison Tool" />
+    <meta property="og:title" content="fknjsn - Private JSON Comparison" />
     <meta
       property="og:description"
-      content="Compare JSON side-by-side. Paste, search, and diff multiple JSON blocks."
+      content="100% client-side JSON formatter, filter, and comparison tool. Your data never leaves your browser."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://fknjsn.com/" />
@@ -32,10 +36,10 @@
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="fknjsn - JSON Comparison Tool" />
+    <meta name="twitter:title" content="fknjsn - Private JSON Comparison" />
     <meta
       name="twitter:description"
-      content="Compare JSON side-by-side. Paste, search, and diff multiple JSON blocks."
+      content="100% client-side JSON formatter, filter, and comparison tool. Your data never leaves your browser."
     />
     <meta name="twitter:image" content="https://fknjsn.com/og-image.png" />
 
@@ -62,7 +66,7 @@
     />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=add,backspace,cancel,close,delete&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=add,backspace,cancel,close,code,delete&display=swap"
     />
     <script src="https://unpkg.com/vue@3.4.21/dist/vue.global.prod.js"></script>
     <script src="https://unpkg.com/vue-json-pretty@2.4.0/lib/vue-json-pretty.js"></script>
@@ -165,6 +169,21 @@
         z-index: 100;
         width: 3rem;
         border-right: 1px solid var(--border);
+      }
+
+      .github-link {
+        color: #ff69b4;
+        text-decoration: none;
+        margin-top: 1rem;
+        transition: color 0.15s ease;
+
+        .material-symbols-outlined {
+          font-size: 24px;
+        }
+
+        &:hover {
+          color: #ff99cc;
+        }
       }
 
       .rows-container {
@@ -533,7 +552,18 @@
   <body>
     <main id="app" class="container">
       <div class="card">
-        <h1>fknjsn</h1>
+        <h1>
+          fknjsn
+          <a
+            href="https://github.com/jonza/fknjsn"
+            target="_blank"
+            rel="noopener"
+            class="github-link"
+            title="View on GitHub"
+          >
+            gthb
+          </a>
+        </h1>
         <div class="rows-container">
           <div
             v-for="(row, index) in rows"
@@ -559,7 +589,7 @@
               <span class="material-symbols-outlined">delete</span>
             </button>
             <div v-if="row.blocks.length === 0" class="empty-state">
-              CLICK HERE. PASTE JSON.
+              CLICK HERE. PASTE JSON. 100% CLIENT SIDE.
             </div>
             <template v-for="block in row.blocks" :key="block.id">
               <div v-if="block.data === null" class="empty-column">
@@ -786,42 +816,16 @@
                     {
                       id: 1,
                       data: {
-                        works: true,
-                        why: "no idea",
-                        bugs: 0,
-                        coffee: "needed",
+                        clientSide: "100%",
+                        formatter: true,
+                        filterer: true,
+                        stealYourShit: false,
                       },
                       search: "",
                     },
                   ],
                 },
-                {
-                  id: 3,
-                  blocks: [
-                    {
-                      id: 2,
-                      data: {
-                        works: false,
-                        ffs: true,
-                        why: "still no idea",
-                        bugs: 47,
-                        coffee: "empty",
-                      },
-                      search: "ffs",
-                    },
-                    {
-                      id: 3,
-                      data: {
-                        works: true,
-                        ffs: false,
-                        why: "still no idea",
-                        bugs: 0,
-                        coffee: "hot",
-                      },
-                      search: "ffs",
-                    },
-                  ],
-                },
+                { id: 3, blocks: [] },
                 { id: 4, blocks: [] },
               ],
               blockIdCounter: 3,
